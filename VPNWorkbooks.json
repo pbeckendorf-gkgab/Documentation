@@ -1,0 +1,79 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# VPN Tunnel Status\n---\n\nThis workbook displays two tables:\n1. The current status of the vpn-tunnels connected to the virtual WAN hub.\n2. The last vpn-tunnel log entries in descending order.\n\nOnly data of the last 30 days is displayed."
+      },
+      "name": "text - 2"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AzureDiagnostics\r\n  | where Category == \"TunnelDiagnosticLog\"\r\n  | summarize arg_max(TimeGenerated, *) by remoteIP_s, instance_s\r\n  | sort by TimeGenerated desc\r\n  | project  TimeGenerated, instance_s, ikeSAs_LocalEndpoint_s, OperationName, status_s, stateChangeReason_s, remoteIP_s",
+        "size": 4,
+        "title": "Current vpn-tunnel status",
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "crossComponentResources": [
+          "/subscriptions/9880197f-3847-4e03-92ce-38dbe8b800b3/resourceGroups/rg-monitoring-prod/providers/Microsoft.OperationalInsights/workspaces/log-gpd-operationallogs-we-prod"
+        ],
+        "visualization": "table",
+        "tileSettings": {
+          "titleContent": {
+            "columnMatch": "instance_s"
+          },
+          "subtitleContent": {
+            "columnMatch": "remoteIP_s"
+          },
+          "leftContent": {
+            "columnMatch": "status_s",
+            "formatter": 1
+          },
+          "rightContent": {
+            "columnMatch": "TimeGenerated"
+          },
+          "secondaryContent": {
+            "columnMatch": "stateChangeReason_s"
+          },
+          "showBorder": false
+        },
+        "graphSettings": {
+          "type": 0
+        }
+      },
+      "name": "Current vpn-tunnel status"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AzureDiagnostics\r\n  | where Category == \"TunnelDiagnosticLog\"\r\n  | project  TimeGenerated, instance_s, ikeSAs_LocalEndpoint_s, OperationName, status_s, stateChangeReason_s, remoteIP_s\r\n  | sort by TimeGenerated desc ",
+        "size": 0,
+        "title": "VPN-tunnel logfile",
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "crossComponentResources": [
+          "/subscriptions/9880197f-3847-4e03-92ce-38dbe8b800b3/resourceGroups/rg-monitoring-prod/providers/Microsoft.OperationalInsights/workspaces/log-gpd-operationallogs-we-prod"
+        ],
+        "gridSettings": {
+          "rowLimit": 50,
+          "filter": true
+        }
+      },
+      "name": "Logfile vpn-tunnels"
+    }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/9880197f-3847-4e03-92ce-38dbe8b800b3/resourcegroups/rg-monitoring-prod/providers/microsoft.operationalinsights/workspaces/log-gpd-operationallogs-prod"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
